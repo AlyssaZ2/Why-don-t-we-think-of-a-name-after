@@ -11,12 +11,12 @@ public class inkStoryManager : MonoBehaviour
     private Story story;
 
     [SerializeField] private TextMeshProUGUI dialogueText; // Dialogue field
-    [SerializeField] private TextMeshProUGUI characterNameText; // Character name field
-    [SerializeField] private Image characterPortrait; // Character portrait image
+    [SerializeField] private TextMeshProUGUI speakerName; // Character name field
+    [SerializeField] private Image speakerSprite; // Character portrait image
     [SerializeField] private GameObject TextPanel; 
 
     [SerializeField] private Button choiceButtonPrefab; // Prefab for choice buttons (Make sure this is a Button prefab)
-    [SerializeField] private Transform choicesContainer; // UI container for choice buttons
+    [SerializeField] private Transform disappearsOnEnd; // UI container for choice buttons
 
     private Dictionary<string, Sprite> characterImages; // Dictionary for image lookup
     private bool isWaitingForChoice = false;
@@ -82,9 +82,9 @@ public class inkStoryManager : MonoBehaviour
     void HideUI()
 {
     dialogueText.gameObject.SetActive(false);
-    characterNameText.gameObject.SetActive(false);
-    characterPortrait.gameObject.SetActive(false);
-    choicesContainer.gameObject.SetActive(false);
+    speakerName.gameObject.SetActive(false);
+    speakerSprite.gameObject.SetActive(false);
+    disappearsOnEnd.gameObject.SetActive(false);
     TextPanel.gameObject.SetActive(false);
 
 }
@@ -104,11 +104,11 @@ public class inkStoryManager : MonoBehaviour
 
             if (key == "char")
             {
-                characterNameText.text = value; // Set character name
+                speakerName.text = value; // Set character name
             }
             else if (key == "image" && characterImages.ContainsKey(value))
             {
-                characterPortrait.sprite = characterImages[value]; // Set character portrait
+                speakerSprite.sprite = characterImages[value]; // Set character portrait
             }
         }
     }
@@ -122,12 +122,12 @@ public class inkStoryManager : MonoBehaviour
         foreach (Ink.Runtime.Choice choice in story.currentChoices)
         {
             // Instantiate the button
-            Button choiceButton = Instantiate(choiceButtonPrefab, choicesContainer);
+            Button choiceButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
             choiceButton.GetComponentInChildren<TextMeshProUGUI>().text = choice.text;
 
             // Positioning the button
             RectTransform buttonTransform = choiceButton.GetComponent<RectTransform>();
-            buttonTransform.anchoredPosition = new Vector2(startX, startY + (choicesContainer.childCount * spacingY));
+            buttonTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
 
             int choiceIndex = choice.index;
             choiceButton.onClick.AddListener(() => ChooseChoice(choiceIndex));
@@ -144,7 +144,7 @@ public class inkStoryManager : MonoBehaviour
 
     void DestroyAllButtons()
     {
-        foreach (Transform child in choicesContainer)
+        foreach (Transform child in disappearsOnEnd)
         {
             Destroy(child.gameObject);
         }

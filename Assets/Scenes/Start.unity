@@ -357,11 +357,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inkJSON: {fileID: 4900000, guid: 12cfbf33775e4f84688af6085b698115, type: 3}
   dialogueText: {fileID: 383625342}
-  characterNameText: {fileID: 1720795121}
-  characterPortrait: {fileID: 1884652856}
+  speakerName: {fileID: 1720795121}
+  speakerSprite: {fileID: 1884652856}
   TextPanel: {fileID: 1124606515}
   choiceButtonPrefab: {fileID: 1749923117827600013, guid: 9fa1c2a71869095438527d166c76b00f, type: 3}
-  choicesContainer: {fileID: 1124606516}
+  disappearsOnEnd: {fileID: 1124606516}
 --- !u!4 &1892219456
 Transform:
   m_ObjectHideFlags: 0

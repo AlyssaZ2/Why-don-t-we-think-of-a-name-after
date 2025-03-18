@@ -5,19 +5,29 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
+//I need to go to bed T-T
+//I choose you Pikachu!!!!!!
+
 public class battleStoryManager : MonoBehaviour
 {
 
-    [SerializeField] private TextMeshProUGUI dialogueText; // Dialogue field
-    [SerializeField] private TextMeshProUGUI playerPokemonName; // Character name field
-    [SerializeField] private Image playerPokemonSprite; // Character portrait image
+    [SerializeField] private TextMeshProUGUI dialogueText; 
+    [SerializeField] private TextMeshProUGUI playerPokemonName; 
+    [SerializeField] private Image playerPokemonSprite; 
     [SerializeField] private GameObject TextPanel; 
     [SerializeField] private Image opponentPokemonSprite;
 
-    [SerializeField] private Button choiceButtonPrefab; // Prefab for choice buttons (Make sure this is a Button prefab)
-    [SerializeField] private Transform disappearsOnEnd; // UI container for choice buttons
+    [SerializeField] private Button choiceButtonPrefab; 
+    [SerializeField] private Transform disappearsOnEnd; 
 
+    [SerializeField] private Slider playerHealthSlider;
     [SerializeField] private int playerHealth = 100;
+    [SerializeField] private Slider opponentHealthSlider;
+    [SerializeField] private int opponentHealth = 100;
+
+    [SerializeField] private Slider opponentEnergySlider;
+    [SerializeField] private int opponentEnergy = 30;
+
     [SerializeField] private TextMeshProUGUI opponentName;
     private float startX = 0f;
     private float startY = 100f;
@@ -25,10 +35,31 @@ public class battleStoryManager : MonoBehaviour
     private int started = 1;
     private int isOpponentTurn = 0;
 
+    private bool antibioticResistence = false;
+    public int opponentType = 1;
+
     private Dictionary<string, Sprite> characterImages; 
 
     void Start()
     {
+        
+        characterImages = new Dictionary<string, Sprite>
+        {
+            { "redbloodcell", Resources.Load<Sprite>("redbloodcell") },
+            { "whiteBloodCell", Resources.Load<Sprite>("whiteBloodCell")},
+            { "bacteria", Resources.Load<Sprite>("bacteria")},
+ 
+        };
+        playerHealthSlider.value = playerHealth;
+        opponentHealthSlider.value = opponentHealth;
+        playerPokemonSprite.sprite = characterImages["whiteBloodCell"];
+        if (opponentType == 1 ){
+            opponentName.text = "Bacteria";
+            opponentPokemonSprite.sprite = characterImages["bacteria"];
+            antibioticResistence = false; 
+        }
+
+
         dialogueText.text = "An opponent has aproached.";
     }
 
@@ -38,18 +69,6 @@ public class battleStoryManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0)){
             yourTurn();
             started = 0;
-            }
-
-        if (isOpponentTurn == 1){
-            if (Input.GetMouseButtonDown(0)){
-            yourTurn();
-            isOpponentTurn = 0;
-            }
-        }
-
-        if (playerHealth<=0){
-            dialogueText.text = "GAME OVER!";
-            SceneManager.LoadScene("Main Menu");
             }
         }
     }
@@ -109,7 +128,7 @@ public class battleStoryManager : MonoBehaviour
             abilitiesButton.GetComponentInChildren<TextMeshProUGUI>().text = "Abilities";
 
             RectTransform buttonTransform = abilitiesButton.GetComponent<RectTransform>();
-            buttonTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+            buttonTransform.anchoredPosition = new Vector2(startX, startY + (1*spacingY));
             abilitiesButton.transform.SetAsLastSibling();
 
             abilitiesButton.onClick.AddListener(showAbilities);
@@ -119,7 +138,7 @@ public class battleStoryManager : MonoBehaviour
             itemsButton.GetComponentInChildren<TextMeshProUGUI>().text = "Items";
 
             RectTransform itemsTransform = itemsButton.GetComponent<RectTransform>();
-            itemsTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+            itemsTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
             itemsButton.transform.SetAsLastSibling();
 
             itemsButton.onClick.AddListener(showItems);
@@ -134,7 +153,7 @@ public class battleStoryManager : MonoBehaviour
         abilityOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ability One";
 
         RectTransform abilityOneTransform = abilityOneButton.GetComponent<RectTransform>();
-        abilityOneTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+        abilityOneTransform.anchoredPosition = new Vector2(startX, startY + (spacingY));
         abilityOneButton.transform.SetAsLastSibling();
 
         abilityOneButton.onClick.AddListener(abilityOne);
@@ -144,7 +163,7 @@ public class battleStoryManager : MonoBehaviour
         abilityTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ability Two";
 
         RectTransform abilityTwoTransform = abilityTwoButton.GetComponent<RectTransform>();
-        abilityTwoTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+        abilityTwoTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
         abilityTwoButton.transform.SetAsLastSibling();
 
         abilityTwoButton.onClick.AddListener(abilityTwo);
@@ -154,6 +173,13 @@ public class battleStoryManager : MonoBehaviour
     void abilityOne(){
         DestroyAllButtons();
         dialogueText.text = "You use ability one!";
+        opponentHealth = opponentHealth - 5;
+        opponentHealthSlider.value = opponentHealth;
+
+        if (opponentHealth<=0){
+            dialogueText.text = "YOU WIN!";
+            SceneManager.LoadScene("Traveling");
+        }
         opponentTurn();
     }
 
@@ -161,6 +187,13 @@ public class battleStoryManager : MonoBehaviour
     void abilityTwo(){
         DestroyAllButtons();
         dialogueText.text = "You use ability two!";
+        opponentHealth = opponentHealth - 10;
+        opponentHealthSlider.value = opponentHealth;
+
+        if (opponentHealth<=0){
+            dialogueText.text = "YOU WIN!";
+            SceneManager.LoadScene("Traveling");
+        }
         opponentTurn();
     }
 
@@ -181,7 +214,7 @@ public class battleStoryManager : MonoBehaviour
         itemOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Item One";
 
         RectTransform itemOneTransform = itemOneButton.GetComponent<RectTransform>();
-        itemOneTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+        itemOneTransform.anchoredPosition = new Vector2(startX, startY + (1 * spacingY));
         itemOneButton.transform.SetAsLastSibling();
 
         itemOneButton.onClick.AddListener(itemOne);
@@ -191,7 +224,7 @@ public class battleStoryManager : MonoBehaviour
         itemTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Item Two";
 
         RectTransform itemTwoTransform = itemTwoButton.GetComponent<RectTransform>();
-        itemTwoTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+        itemTwoTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
         itemTwoButton.transform.SetAsLastSibling();
 
         itemTwoButton.onClick.AddListener(itemTwo);
@@ -201,19 +234,64 @@ public class battleStoryManager : MonoBehaviour
     void itemOne(){
         DestroyAllButtons();
         dialogueText.text = "You use item one!";
+
+        if (opponentHealth<=0){
+            dialogueText.text = "YOU WIN!";
+            SceneManager.LoadScene("Traveling");
+        }
         opponentTurn();   
     }
 
     void itemTwo(){
         DestroyAllButtons();
         dialogueText.text = "You use item two!";
+
+        if (opponentHealth<=0){
+            dialogueText.text = "YOU WIN!";
+            SceneManager.LoadScene("Traveling");
+        }
         opponentTurn();   
     }
 
     void opponentTurn(){
-        DestroyAllButtons();
-        dialogueText.text = "It is the opponent's turn";
-        isOpponentTurn = 1;
+        StartCoroutine(opponentTurnSequence());
 
     }
+    IEnumerator opponentTurnSequence(){
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        dialogueText.text = "It is the opponent's turn";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+        if (opponentEnergy>=100){
+            dialogueText.text = "The opponent uses ultimate!";
+            opponentEnergy = opponentEnergy -100;
+            opponentEnergySlider.value = opponentEnergy;
+            playerHealth = playerHealth - 25;
+            playerHealthSlider.value = playerHealth;
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            dialogueText.text = "White Blood Cell takes 25 damage!";
+
+        }else{
+            dialogueText.text = "The opponent uses attack!";
+            playerHealth = playerHealth - 10;
+            playerHealthSlider.value = playerHealth;
+            opponentEnergy = opponentEnergy + 10;
+            opponentEnergySlider.value = opponentEnergy;
+        }
+        if(playerHealth<=0){
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            dialogueText.text = "GAME OVER!";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            SceneManager.LoadScene("Main Menu");
+            }
+
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        yourTurn();
+    }
 }
+//Help T-T

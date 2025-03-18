@@ -29,6 +29,9 @@ public class battleStoryManager : MonoBehaviour
     [SerializeField] private int opponentEnergy = 30;
 
     [SerializeField] private TextMeshProUGUI opponentName;
+
+    private string opponentPokemonName;
+
     private float startX = 0f;
     private float startY = 100f;
     private float spacingY = -50f;
@@ -48,19 +51,39 @@ public class battleStoryManager : MonoBehaviour
             { "redbloodcell", Resources.Load<Sprite>("redbloodcell") },
             { "whiteBloodCell", Resources.Load<Sprite>("whiteBloodCell")},
             { "bacteria", Resources.Load<Sprite>("bacteria")},
+            { "strep", Resources.Load<Sprite>("strep")},
+            { "staph", Resources.Load<Sprite>("staph")},
+            { "ecoli", Resources.Load<Sprite>("ecoli")},
  
         };
         playerHealthSlider.value = playerHealth;
         opponentHealthSlider.value = opponentHealth;
         playerPokemonSprite.sprite = characterImages["whiteBloodCell"];
+
+        //Opponent type 1: strep
+        //Opponent type 2: staph
+        //Opponent type 3: e.coli
         if (opponentType == 1 ){
-            opponentName.text = "Bacteria";
-            opponentPokemonSprite.sprite = characterImages["bacteria"];
+            opponentPokemonName = "Strep";
+            opponentName.text = opponentPokemonName;
+            opponentPokemonSprite.sprite = characterImages["strep"];
+            antibioticResistence = false; 
+        }
+        if (opponentType == 2 ){
+            opponentPokemonName = "Staph";
+            opponentName.text = opponentPokemonName;
+            opponentPokemonSprite.sprite = characterImages["staph"];
+            antibioticResistence = false; 
+        }
+         if (opponentType == 3 ){
+            opponentPokemonName = "E.coli";
+            opponentName.text = opponentPokemonName;
+            opponentPokemonSprite.sprite = characterImages["ecoli"];
             antibioticResistence = false; 
         }
 
 
-        dialogueText.text = "An opponent has aproached.";
+        dialogueText.text = "A stray " + opponentPokemonName + " has approached!";
     }
 
     void Update()
@@ -150,7 +173,7 @@ public class battleStoryManager : MonoBehaviour
 
         //Ability One Button
         Button abilityOneButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
-        abilityOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ability One";
+        abilityOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Attack (5)";
 
         RectTransform abilityOneTransform = abilityOneButton.GetComponent<RectTransform>();
         abilityOneTransform.anchoredPosition = new Vector2(startX, startY + (spacingY));
@@ -160,7 +183,7 @@ public class battleStoryManager : MonoBehaviour
 
         //Ability Two Button
         Button abilityTwoButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
-        abilityTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Ability Two";
+        abilityTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Swallow (Execute)";
 
         RectTransform abilityTwoTransform = abilityTwoButton.GetComponent<RectTransform>();
         abilityTwoTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
@@ -186,16 +209,58 @@ public class battleStoryManager : MonoBehaviour
 
     void abilityTwo(){
         DestroyAllButtons();
-        dialogueText.text = "You use ability two!";
-        opponentHealth = opponentHealth - 10;
-        opponentHealthSlider.value = opponentHealth;
+        StartCoroutine(swallow());
+
+        if (opponentHealth<=30){
+            StartCoroutine(executed());
+        }
+        if (opponentHealth>30){
+            StartCoroutine(ineffective());
+        }
 
         if (opponentHealth<=0){
             dialogueText.text = "YOU WIN!";
             SceneManager.LoadScene("Traveling");
         }
+
         opponentTurn();
     }
+
+    IEnumerator swallow(){
+        dialogueText.text = "You use swallow!";
+       
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+    }
+       
+        IEnumerator executed(){
+            dialogueText.text = "Swallow was effective!";
+            opponentHealth = 0;
+            opponentHealthSlider.value = opponentHealth;
+        
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = opponentPokemonName + " takes fatal damage!";
+
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        }
+
+        IEnumerator ineffective(){
+            dialogueText.text = "Swallow was ineffective!";
+            opponentHealth = opponentHealth - 10;
+            opponentHealthSlider.value = opponentHealth;
+
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = opponentPokemonName + " takes 10 damage!";
+
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        }
+    
 
     void DestroyAllButtons()
     {

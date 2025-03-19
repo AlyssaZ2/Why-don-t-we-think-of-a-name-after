@@ -28,15 +28,18 @@ public class battleStoryManager : MonoBehaviour
     [SerializeField] private Slider opponentEnergySlider;
     [SerializeField] private int opponentEnergy = 30;
 
+    [SerializeField] private TextMeshProUGUI playerHPNumbers;
+    [SerializeField] private TextMeshProUGUI opponentHPNumbers;
+
     [SerializeField] private TextMeshProUGUI opponentName;
 
     private string opponentPokemonName;
+    private string PokemonName;
 
     private float startX = 0f;
     private float startY = 100f;
     private float spacingY = -50f;
     private int started = 1;
-    private int isOpponentTurn = 0;
 
     private bool antibioticResistence = false;
     public int opponentType = 1;
@@ -56,8 +59,14 @@ public class battleStoryManager : MonoBehaviour
             { "ecoli", Resources.Load<Sprite>("ecoli")},
  
         };
+
+        playerHPNumbers.text = playerHealth + "/100";
+        opponentHPNumbers.text = opponentHealth + "/100";
+
         playerHealthSlider.value = playerHealth;
         opponentHealthSlider.value = opponentHealth;
+        PokemonName = "White Blood Cell";
+        playerPokemonName.text = PokemonName;
         playerPokemonSprite.sprite = characterImages["whiteBloodCell"];
 
         //Opponent type 1: strep
@@ -173,7 +182,7 @@ public class battleStoryManager : MonoBehaviour
 
         //Ability One Button
         Button abilityOneButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
-        abilityOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Attack (5)";
+        abilityOneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Attack";
 
         RectTransform abilityOneTransform = abilityOneButton.GetComponent<RectTransform>();
         abilityOneTransform.anchoredPosition = new Vector2(startX, startY + (spacingY));
@@ -183,7 +192,7 @@ public class battleStoryManager : MonoBehaviour
 
         //Ability Two Button
         Button abilityTwoButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
-        abilityTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Swallow (Execute)";
+        abilityTwoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Swallow";
 
         RectTransform abilityTwoTransform = abilityTwoButton.GetComponent<RectTransform>();
         abilityTwoTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
@@ -195,9 +204,11 @@ public class battleStoryManager : MonoBehaviour
 
     void abilityOne(){
         DestroyAllButtons();
-        dialogueText.text = "You use ability one!";
-        opponentHealth = opponentHealth - 5;
+        dialogueText.text = "You attack!";
+        opponentHealth = opponentHealth - 10;
         opponentHealthSlider.value = opponentHealth;
+        opponentHPNumbers.text = opponentHealth + "/100";
+        StartCoroutine(onAttack());
 
         if (opponentHealth<=0){
             dialogueText.text = "YOU WIN!";
@@ -205,59 +216,83 @@ public class battleStoryManager : MonoBehaviour
         }
         opponentTurn();
     }
+       IEnumerator onAttack(){
+            dialogueText.text = "You use attack!";
 
-
-    void abilityTwo(){
-        DestroyAllButtons();
-        StartCoroutine(swallow());
-
-        if (opponentHealth<=30){
-            StartCoroutine(executed());
-        }
-        if (opponentHealth>30){
-            StartCoroutine(ineffective());
-        }
-
-        if (opponentHealth<=0){
-            dialogueText.text = "YOU WIN!";
-            SceneManager.LoadScene("Traveling");
-        }
-
-        opponentTurn();
-    }
-
-    IEnumerator swallow(){
-        dialogueText.text = "You use swallow!";
-       
-        yield return null;
-        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-    }
-       
-        IEnumerator executed(){
-            dialogueText.text = "Swallow was effective!";
-            opponentHealth = 0;
-            opponentHealthSlider.value = opponentHealth;
-        
-            yield return null;
-            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-            dialogueText.text = opponentPokemonName + " takes fatal damage!";
-
-            yield return null;
-            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-        }
-
-        IEnumerator ineffective(){
-            dialogueText.text = "Swallow was ineffective!";
-            opponentHealth = opponentHealth - 10;
-            opponentHealthSlider.value = opponentHealth;
-
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
             dialogueText.text = opponentPokemonName + " takes 10 damage!";
 
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        }
+
+    void abilityTwo(){
+        DestroyAllButtons();
+
+        if (opponentHealth<=30){
+            StartCoroutine(executed());
+        }else{
+            StartCoroutine(ineffective());
+        }
+
+        if (opponentHealth<=0){
+            StartCoroutine(winn());
+            SceneManager.LoadScene("Traveling");
+        }
+        if (opponentHealth>0){
+            opponentTurn();
+        }
+    }
+        IEnumerator winn(){
+            dialogueText.text = "YOU WIN!";
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+
+        }
+        IEnumerator executed(){
+            dialogueText.text = "You use swallow!";
+
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = "Swallow was effective!";
+            opponentHealth = 0;
+            opponentHPNumbers.text = opponentHealth + "/100";
+            opponentHealthSlider.value = opponentHealth;
+
+            playerHealth = playerHealth + 20;
+            playerHealthSlider.value = playerHealth;
+            playerHPNumbers.text = playerHealth + "/100";
+        
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+//THE ISSUE OCCURS HERE.
+            dialogueText.text = opponentPokemonName + " takes fatal damage!";
+
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        }
+
+        IEnumerator ineffective(){
+            dialogueText.text = "You use swallow!";
+        
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = "Swallow was ineffective!";
+            opponentHealth = opponentHealth - 5;
+            opponentHPNumbers.text = opponentHealth + "/100";
+            opponentHealthSlider.value = opponentHealth;
+
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = opponentPokemonName + " takes 5 damage!";
+
+            yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         }
     
@@ -325,7 +360,7 @@ public class battleStoryManager : MonoBehaviour
     IEnumerator opponentTurnSequence(){
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         dialogueText.text = "It is the opponent's turn";
-        yield return null;
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
         if (opponentEnergy>=100){
@@ -334,7 +369,8 @@ public class battleStoryManager : MonoBehaviour
             opponentEnergySlider.value = opponentEnergy;
             playerHealth = playerHealth - 25;
             playerHealthSlider.value = playerHealth;
-            yield return null;
+            playerHPNumbers.text = playerHealth + "/100";
+            yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
             dialogueText.text = "White Blood Cell takes 25 damage!";
 
@@ -342,19 +378,25 @@ public class battleStoryManager : MonoBehaviour
             dialogueText.text = "The opponent uses attack!";
             playerHealth = playerHealth - 10;
             playerHealthSlider.value = playerHealth;
+            playerHPNumbers.text = playerHealth + "/100";
             opponentEnergy = opponentEnergy + 10;
             opponentEnergySlider.value = opponentEnergy;
+
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            dialogueText.text = "White blood cell takes 10 damage!";
         }
         if(playerHealth<=0){
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
             dialogueText.text = "GAME OVER!";
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
             SceneManager.LoadScene("Main Menu");
             }
 
-        yield return null;
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         yourTurn();
     }

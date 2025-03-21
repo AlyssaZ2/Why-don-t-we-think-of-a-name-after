@@ -48,7 +48,7 @@ public class battleStoryManager : MonoBehaviour
 
     void Start()
     {
-        
+        //LOAD IMAGES
         characterImages = new Dictionary<string, Sprite>
         {
             { "redbloodcell", Resources.Load<Sprite>("redbloodcell") },
@@ -59,6 +59,8 @@ public class battleStoryManager : MonoBehaviour
             { "ecoli", Resources.Load<Sprite>("ecoli")},
  
         };
+
+        //ASSIGN VARIABLES
 
         playerHPNumbers.text = playerHealth + "/100";
         opponentHPNumbers.text = opponentHealth + "/100";
@@ -93,18 +95,22 @@ public class battleStoryManager : MonoBehaviour
 
 
         dialogueText.text = "A stray " + opponentPokemonName + " has approached!";
+        StartCoroutine(Tuturn());
     }
 
     void Update()
+    //THINGS ARE GETTING MURDERED TODAY. 
     {
-        if (started == 1){
-            if (Input.GetMouseButtonDown(0)){
-            yourTurn();
-            started = 0;
-            }
+        if (opponentHealth<=0){
+            win();
         }
     }
     
+    IEnumerator Tuturn(){
+        yield return new WaitForSeconds(0.1f);
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        yourTurn();
+    }
         
     void yourTurn(){
         dialogueText.text = "Make your move.";
@@ -113,17 +119,14 @@ public class battleStoryManager : MonoBehaviour
 
     void win(){
         
-        for (int i = 0; i <= 1; i++) {
-            if (Input.GetMouseButtonDown(0)){
-                if (i == 0) {
-                    dialogueText.text = opponentName + " has taken lethal damage!";
-            }
-                if (i == 1) {
-                    dialogueText.text = "You win!";
-                    endScene();
-                }
-            }
-        }
+        StartCoroutine(youWin());
+        endScene();
+    }
+
+    IEnumerator youWin(){
+        dialogueText.text = "You win!";
+        yield return new WaitForSeconds(0.1f);
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
     }
     
     void endScene(){
@@ -204,19 +207,14 @@ public class battleStoryManager : MonoBehaviour
 
     void abilityOne(){
         DestroyAllButtons();
-        dialogueText.text = "You attack!";
         opponentHealth = opponentHealth - 10;
         opponentHealthSlider.value = opponentHealth;
         opponentHPNumbers.text = opponentHealth + "/100";
         StartCoroutine(onAttack());
-
-        if (opponentHealth<=0){
-            dialogueText.text = "YOU WIN!";
-            SceneManager.LoadScene("Traveling");
-        }
         opponentTurn();
     }
        IEnumerator onAttack(){
+        Debug.Log("onAttack");
             dialogueText.text = "You use attack!";
 
             yield return new WaitForSeconds(0.1f);
@@ -238,20 +236,13 @@ public class battleStoryManager : MonoBehaviour
         }
 
         if (opponentHealth<=0){
-            StartCoroutine(winn());
-            SceneManager.LoadScene("Traveling");
+            win();
         }
         if (opponentHealth>0){
             opponentTurn();
         }
     }
-        IEnumerator winn(){
-            dialogueText.text = "YOU WIN!";
-            yield return new WaitForSeconds(0.1f);
-            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
-
-        }
         IEnumerator executed(){
             dialogueText.text = "You use swallow!";
 
@@ -336,8 +327,7 @@ public class battleStoryManager : MonoBehaviour
         dialogueText.text = "You use item one!";
 
         if (opponentHealth<=0){
-            dialogueText.text = "YOU WIN!";
-            SceneManager.LoadScene("Traveling");
+            win();
         }
         opponentTurn();   
     }
@@ -347,17 +337,21 @@ public class battleStoryManager : MonoBehaviour
         dialogueText.text = "You use item two!";
 
         if (opponentHealth<=0){
-            dialogueText.text = "YOU WIN!";
-            SceneManager.LoadScene("Traveling");
+            win();
         }
         opponentTurn();   
     }
 
     void opponentTurn(){
+        if (opponentHealth<=0){
+            win();
+        }
+        Debug.Log("opponentTurn");
         StartCoroutine(opponentTurnSequence());
 
     }
     IEnumerator opponentTurnSequence(){
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         dialogueText.text = "It is the opponent's turn";
         yield return new WaitForSeconds(0.1f);

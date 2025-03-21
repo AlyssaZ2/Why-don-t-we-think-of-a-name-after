@@ -1,4 +1,4 @@
-﻿#char:Narrator
+#char:Narrator
 #image: redbloodcell
 
 Hello, do you like having blood? 

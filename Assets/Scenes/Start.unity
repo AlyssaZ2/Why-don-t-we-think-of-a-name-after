@@ -355,13 +355,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f83e4e851539c5c4e8456763ded8d977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inkJSON: {fileID: 4900000, guid: 12cfbf33775e4f84688af6085b698115, type: 3}
+  inkJSON: {fileID: 4900000, guid: 0e38dd1d0262c3a418f3d13331606a30, type: 3}
   dialogueText: {fileID: 383625342}
   speakerName: {fileID: 1720795121}
   speakerSprite: {fileID: 1884652856}
   TextPanel: {fileID: 1124606515}
   choiceButtonPrefab: {fileID: 1749923117827600013, guid: 9fa1c2a71869095438527d166c76b00f, type: 3}
   disappearsOnEnd: {fileID: 1124606516}
+  scenceChange: 1
+  nextSceneName: Battle
 --- !u!4 &1892219456
 Transform:
   m_ObjectHideFlags: 0
@@ -518,8 +520,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7778325449562298416, guid: 695d10603ce08bd4a8f41778c04d0f1b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 428.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778325449562298416, guid: 695d10603ce08bd4a8f41778c04d0f1b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -64.16
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7778325449562298416, guid: 695d10603ce08bd4a8f41778c04d0f1b, type: 3}
       propertyPath: m_AnchoredPosition.y

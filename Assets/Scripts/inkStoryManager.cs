@@ -1,37 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // Required for the Button component
+using UnityEngine.UI; 
 using Ink.Runtime;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class inkStoryManager : MonoBehaviour
 {
-    [SerializeField] private TextAsset inkJSON; // Ink story file
+    [SerializeField] private TextAsset inkJSON; // ink file
     private Story story;
 
-    [SerializeField] private TextMeshProUGUI dialogueText; // Dialogue field
-    [SerializeField] private TextMeshProUGUI speakerName; // Character name field
-    [SerializeField] private Image speakerSprite; // Character portrait image
+    [SerializeField] private TextMeshProUGUI dialogueText; // dialogue
+    [SerializeField] private TextMeshProUGUI speakerName; // name
+    [SerializeField] private Image speakerSprite; // pic
     [SerializeField] private GameObject TextPanel; 
 
-    [SerializeField] private Button choiceButtonPrefab; // Prefab for choice buttons (Make sure this is a Button prefab)
-    [SerializeField] private Transform disappearsOnEnd; // UI container for choice buttons
+    [SerializeField] private Button choiceButtonPrefab; //button prefav
+    [SerializeField] private Transform disappearsOnEnd; //container for choice buttons
+    [SerializeField] private bool scenceChange;
 
-    private Dictionary<string, Sprite> characterImages; // Dictionary for image lookup
+    private Dictionary<string, Sprite> characterImages; // Where da pics go~
     private bool isWaitingForChoice = false;
     private bool waitingForClickToShowChoices = false;
 
+    [SerializeField] public string nextSceneName;
+
     void Start()
     {
-        // Initialize Ink story
         story = new Story(inkJSON.text);
 
-        // Load character portraits from Resources
+        // Load da pics or they wont show :(
         characterImages = new Dictionary<string, Sprite>
         {
-            { "redbloodcell", Resources.Load<Sprite>("redbloodcell") },
- 
+            { "redBloodCell", Resources.Load<Sprite>("redbloodcell") },
+            { "DistributorRbc", Resources.Load<Sprite>("distributerRbc")},
+            { "elderRbc", Resources.Load<Sprite>("elderRbc")},
+            { "bacteria", Resources.Load<Sprite>("bacteria")},
+            { "whiteBloodCell", Resources.Load<Sprite>("whiteBloodCell")},
+            { "Blank", Resources.Load<Sprite>("blank")},
         };
 
         DisplayNextLine();
@@ -39,7 +46,7 @@ public class inkStoryManager : MonoBehaviour
 
     void Update()
     {
-        // Click anywhere to continue, unless waiting for a choice
+        // Click to continue, unless waiting for choice 
         if (Input.GetMouseButtonDown(0))
         {
             if (waitingForClickToShowChoices)
@@ -56,26 +63,28 @@ public class inkStoryManager : MonoBehaviour
 
     void DisplayNextLine()
     {
-        if (isWaitingForChoice) return; // Don't continue if we're waiting for a choice
+        if (isWaitingForChoice) return; // Don't continue if waiting for a choice
 
         if (story.canContinue)
         {
             string currentText = story.Continue();
             dialogueText.text = currentText;
 
-            // Process and apply character name & image
             ProcessTags();
         }
         else
         {
-            dialogueText.text = "The End.";
+            if (scenceChange == true){
+                SceneManager.LoadScene(nextSceneName);
+            }else{
             HideUI();
+            }
         }
 
         if (story.currentChoices.Count > 0)
         {
-            isWaitingForChoice = true; // We are waiting for a choice to be made
-            waitingForClickToShowChoices = true; // Wait for the next click to show choices
+            isWaitingForChoice = true; 
+            waitingForClickToShowChoices = true; 
         }
     }
 
@@ -89,7 +98,7 @@ public class inkStoryManager : MonoBehaviour
 
 }
 
-    void ProcessTags()
+    void ProcessTags()//take da hashtags and make them real
     {
         List<string> currentTags = story.currentTags;
 
@@ -104,11 +113,11 @@ public class inkStoryManager : MonoBehaviour
 
             if (key == "char")
             {
-                speakerName.text = value; // Set character name
+                speakerName.text = value; 
             }
             else if (key == "image" && characterImages.ContainsKey(value))
             {
-                speakerSprite.sprite = characterImages[value]; // Set character portrait
+                speakerSprite.sprite = characterImages[value]; 
             }
         }
     }
@@ -121,11 +130,10 @@ public class inkStoryManager : MonoBehaviour
 
         foreach (Ink.Runtime.Choice choice in story.currentChoices)
         {
-            // Instantiate the button
+            
             Button choiceButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
             choiceButton.GetComponentInChildren<TextMeshProUGUI>().text = choice.text;
 
-            // Positioning the button
             RectTransform buttonTransform = choiceButton.GetComponent<RectTransform>();
             buttonTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
 

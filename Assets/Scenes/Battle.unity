@@ -324,6 +324,71 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &214368902
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 214368904}
+  - component: {fileID: 214368903}
+  m_Layer: 0
+  m_Name: BattleManager (pls work >-<)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &214368903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214368902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa99b8b42161364ca2f5e0bc9f73516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextPanel: {fileID: 698271786}
+  dialogueText: {fileID: 1441179447}
+  playerName: {fileID: 259670154}
+  playerSprite: {fileID: 589553416}
+  opponentName: {fileID: 235967070}
+  opponentSprite: {fileID: 386044117}
+  playerHPNumbers: {fileID: 1364377721}
+  opponentHPNumbers: {fileID: 1000739823}
+  playerHealthSlider: {fileID: 1379075094}
+  playerHealth: 100
+  opponentHealthSlider: {fileID: 850888620}
+  opponentHealth: 100
+  opponentEnergySlider: {fileID: 204463336}
+  opponentEnergy: 30
+  choiceButtonPrefab: {fileID: 1891406852}
+  disappearsOnEnd: {fileID: 1125911385}
+  PokemonName: Neutrophil 2342352346
+  opponentPokemonName: Bacteria
+  nextScene: Traveling
+  tryAgainScene: Main Menu
+  opponentType: 1
+--- !u!4 &214368904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214368902}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 246.57372, y: 172.45753, z: -0.4146009}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &235967069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1080,67 +1145,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698271786}
   m_CullTransparentMesh: 1
---- !u!1 &734506444
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 734506446}
-  - component: {fileID: 734506447}
-  m_Layer: 0
-  m_Name: BattleManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &734506446
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734506444}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 380.69876, y: 126.698044, z: -1.763846}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &734506447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734506444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63bb527edbd869d46af41857589a2fbe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dialogueText: {fileID: 1441179447}
-  playerPokemonName: {fileID: 259670154}
-  playerPokemonSprite: {fileID: 589553416}
-  TextPanel: {fileID: 1125911384}
-  opponentPokemonSprite: {fileID: 386044117}
-  choiceButtonPrefab: {fileID: 1891406852}
-  disappearsOnEnd: {fileID: 1125911385}
-  playerHealthSlider: {fileID: 1379075094}
-  playerHealth: 100
-  opponentHealthSlider: {fileID: 850888620}
-  opponentHealth: 100
-  opponentEnergySlider: {fileID: 204463336}
-  opponentEnergy: 30
-  playerHPNumbers: {fileID: 1364377721}
-  opponentHPNumbers: {fileID: 1000739823}
-  opponentName: {fileID: 235967070}
-  opponentType: 1
 --- !u!1 &850888618
 GameObject:
   m_ObjectHideFlags: 0
@@ -2731,5 +2735,5 @@ SceneRoots:
   - {fileID: 1035713963}
   - {fileID: 630333697}
   - {fileID: 1084217272}
-  - {fileID: 734506446}
   - {fileID: 1891406851}
+  - {fileID: 214368904}

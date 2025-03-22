@@ -124,6 +124,8 @@ public class battleStoryManager : MonoBehaviour
     }
 
     IEnumerator youWin(){
+        yield return new WaitForSeconds(0.1f);
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         dialogueText.text = "You win!";
         yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
@@ -234,10 +236,7 @@ public class battleStoryManager : MonoBehaviour
         }else{
             StartCoroutine(ineffective());
         }
-
-        if (opponentHealth<=0){
-            win();
-        }
+ 
         if (opponentHealth>0){
             opponentTurn();
         }
@@ -250,9 +249,8 @@ public class battleStoryManager : MonoBehaviour
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
             dialogueText.text = "Swallow was effective!";
-            opponentHealth = 0;
-            opponentHPNumbers.text = opponentHealth + "/100";
-            opponentHealthSlider.value = opponentHealth;
+            opponentHPNumbers.text = "0/100";
+            opponentHealthSlider.value = 0;
 
             playerHealth = playerHealth + 20;
             playerHealthSlider.value = playerHealth;
@@ -265,6 +263,8 @@ public class battleStoryManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            opponentHealth = 0;
+
         }
 
         IEnumerator ineffective(){

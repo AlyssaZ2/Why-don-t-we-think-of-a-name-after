@@ -25,6 +25,7 @@ public class inkStoryManager : MonoBehaviour
     private bool waitingForClickToShowChoices = false;
 
     [SerializeField] public string nextSceneName;
+    public bool endGame = false;
 
     void Start()
     {
@@ -33,11 +34,11 @@ public class inkStoryManager : MonoBehaviour
         // Load da pics or they wont show :(
         characterImages = new Dictionary<string, Sprite>
         {
-            { "redBloodCell", Resources.Load<Sprite>("redbloodcell") },
-            { "DistributorRbc", Resources.Load<Sprite>("distributerRbc")},
-            { "elderRbc", Resources.Load<Sprite>("elderRbc")},
-            { "bacteria", Resources.Load<Sprite>("bacteria")},
-            { "whiteBloodCell", Resources.Load<Sprite>("whiteBloodCell")},
+            { "redBloodCell", Resources.Load<Sprite>("RBC happy") },
+            { "DistributorRbc", Resources.Load<Sprite>("distributorRBC")},
+            { "elderRbc", Resources.Load<Sprite>("elderRBC")},
+            { "bacteria", Resources.Load<Sprite>("strep bacteria fight transparent")},
+            { "whiteBloodCell", Resources.Load<Sprite>("WBC normal")},
             { "Blank", Resources.Load<Sprite>("blank")},
         };
 
@@ -74,8 +75,11 @@ public class inkStoryManager : MonoBehaviour
         }
         else
         {
-            if (scenceChange == true){
+            if (endGame == true){
+                SceneManager.LoadScene("Main Menu");
+            }else if(scenceChange == true){
                 SceneManager.LoadScene(nextSceneName);
+
             }else{
             HideUI();
             }
@@ -136,6 +140,7 @@ public class inkStoryManager : MonoBehaviour
 
             RectTransform buttonTransform = choiceButton.GetComponent<RectTransform>();
             buttonTransform.anchoredPosition = new Vector2(startX, startY + (disappearsOnEnd.childCount * spacingY));
+            choiceButton.transform.SetAsLastSibling();
 
             int choiceIndex = choice.index;
             choiceButton.onClick.AddListener(() => ChooseChoice(choiceIndex));

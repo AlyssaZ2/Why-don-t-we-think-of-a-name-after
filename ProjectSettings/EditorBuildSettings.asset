@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Traveling.unity
     guid: 79ca79e460df63a4eb8328895414b4f0
+  - enabled: 1
+    path: Assets/Scenes/Try Again.unity
+    guid: 2b2c5449f5c22ee498fb71a2c0626f9d
   m_configObjects: {}

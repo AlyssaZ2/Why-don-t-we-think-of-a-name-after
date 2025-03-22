@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.UI; 
 using TMPro;
 using UnityEngine.SceneManagement;
+using Random = System.Random;
 
 public class battleSystem : MonoBehaviour
 
 {
     //UI:
+    Random rnd = new Random();
     [SerializeField] private GameObject TextPanel; //panel behind the text
     [SerializeField] private TextMeshProUGUI dialogueText; //the text
     [SerializeField] private TextMeshProUGUI playerName; 
@@ -36,6 +38,8 @@ public class battleSystem : MonoBehaviour
     private float startY = 100f;
     private float spacingY = -50f;
     private int started = 1;
+    private bool swollenTonsils = false;
+    private bool soreThroat = false;
 
     //Variables
     [SerializeField] private string PokemonName;
@@ -53,8 +57,8 @@ public class battleSystem : MonoBehaviour
         characterImages = new Dictionary<string, Sprite>
         {
             { "redbloodcell", Resources.Load<Sprite>("redbloodcell") },
-            { "whiteBloodCell", Resources.Load<Sprite>("whiteBloodCell")},
-            { "bacteria", Resources.Load<Sprite>("bacteria")},
+            { "whiteBloodCell", Resources.Load<Sprite>("WBC normal")},
+            { "bacteria", Resources.Load<Sprite>("strep bacteria fight transparent")},
             { "strep", Resources.Load<Sprite>("strep")},
             { "staph", Resources.Load<Sprite>("staph")},
             { "ecoli", Resources.Load<Sprite>("ecoli")},
@@ -166,7 +170,7 @@ public class battleSystem : MonoBehaviour
         dialogueText.text = PokemonName + " used swallow!";
         yield return null;
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-        if (opponentHealth<=20){
+        if (opponentHealth<=50){
             dialogueText.text = "Swallow was effective!";
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
@@ -193,6 +197,98 @@ public class battleSystem : MonoBehaviour
 
     void items(){
         destroyButtons();
+        //amoxicillin Button
+        Button amoxicillinButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
+        amoxicillinButton.GetComponentInChildren<TextMeshProUGUI>().text = "Amoxicillin";
+
+        RectTransform amoxicillinTransform = amoxicillinButton.GetComponent<RectTransform>();
+        amoxicillinTransform.anchoredPosition = new Vector2(startX, startY + (spacingY));
+        amoxicillinButton.transform.SetAsLastSibling();
+
+        amoxicillinButton.onClick.AddListener(amoxicillin);
+
+        //Swallow Button
+        Button warmTeaButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
+        warmTeaButton.GetComponentInChildren<TextMeshProUGUI>().text = "Warm Tea";
+
+        RectTransform warmTeaTransform = warmTeaButton.GetComponent<RectTransform>();
+        warmTeaTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
+        warmTeaButton.transform.SetAsLastSibling();
+
+        warmTeaButton.onClick.AddListener(warmTea);
+    }
+
+    void warmTea(){
+        destroyButtons();
+        StartCoroutine(warmTeaCoroutine());
+    }
+
+    IEnumerator warmTeaCoroutine(){
+        dialogueText.text = PokemonName + " uses warmTea!";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        dialogueText.text = "(note: it is important to keep your fluid intake up while sick!)";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        dialogueText.text = "(note: warm tea can also soothe swollen tonsils.)";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        if (swollenTonsils == true){
+            dialogueText.text = "Warm tea was effective!";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            dialogueText.text = PokemonName+" heals 15 HP!";
+            playerHealth = playerHealth + 15;
+            playerHealthSlider.value = playerHealth;
+            playerHPNumbers.text = playerHealth+"/100";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            checkOpponentHP();
+        }else{
+            dialogueText.text = "Warm tea was ineffective!";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            dialogueText.text = PokemonName+" heals 10 HP!";
+            playerHealth = playerHealth + 10;
+            playerHealthSlider.value = playerHealth;
+            playerHPNumbers.text = playerHealth+"/100";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            checkOpponentHP();
+        }
+
+        
+    }
+
+    void amoxicillin(){
+        destroyButtons();
+        StartCoroutine(amoxicillinCoroutine());
+        
+
+    }
+
+    IEnumerator amoxicillinCoroutine(){
+        dialogueText.text = PokemonName + " uses Amoxicillin!";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        dialogueText.text = "(note: Amoxicillin is an antibiotic that attacks actively dividing bacteria, particularly strep bacteria causing sore throat.)";
+        yield return null;
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));       
+        if (soreThroat == true){
+            dialogueText.text = "Amoxicillin was effective!";
+            dialogueText.text = PokemonName + " no longer has sore throat!";
+            soreThroat = false;
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        }else{
+            dialogueText.text = "Amoxicillin was ineffective.";
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+        }
+        checkOpponentHP();
+
+
     }
 
     void checkOpponentHP(){
@@ -229,14 +325,47 @@ public class battleSystem : MonoBehaviour
             dialogueText.text = opponentPokemonName + " uses attack!";
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-            dialogueText.text = PokemonName + " takes 10 damage!";
-            playerHealth = playerHealth - 10;
+            int effect  = rnd.Next(1, 10);
+            dialogueText.text = PokemonName + " takes 7 damage!";
+            playerHealth = playerHealth - 7;
             playerHPNumbers.text = playerHealth + "/100";
             playerHealthSlider.value = playerHealth;
             opponentEnergy = opponentEnergy + 20;
             opponentEnergySlider.value = opponentEnergy;
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+            if (effect <=3){
+                dialogueText.text = PokemonName + " has sore throat!";
+                soreThroat = true;
+                yield return null;
+                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            }
+            if (soreThroat == true){
+                dialogueText.text = PokemonName + " takes 5 sore throat damage!";
+                playerHealth = playerHealth - 5;
+                playerHealthSlider.value = playerHealth;
+                playerHPNumbers.text = playerHealth + "/100";
+                yield return null;
+                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            }
+
+            if (effect >=8){
+                dialogueText.text = PokemonName + " has swollen tonsils!";
+                swollenTonsils = true;
+                yield return null;
+                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));                
+            }
+            if (swollenTonsils==true){
+                dialogueText.text = PokemonName + " takes 7 swollen tonsils damage!";
+                playerHealth = playerHealth - 7;
+                playerHealthSlider.value = playerHealth;
+                playerHPNumbers.text = playerHealth + "/100";
+                yield return null;
+                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));                
+            } 
+
+
             checkPlayerHP();
         }
     }

@@ -208,33 +208,30 @@ public class battleSystem : MonoBehaviour
         amoxicillinButton.onClick.AddListener(amoxicillin);
 
         //Swallow Button
-        Button warmTeaButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
-        warmTeaButton.GetComponentInChildren<TextMeshProUGUI>().text = "Warm Tea";
+        Button LozengeButton = Instantiate(choiceButtonPrefab, disappearsOnEnd);
+        LozengeButton.GetComponentInChildren<TextMeshProUGUI>().text = "Lozenge";
 
-        RectTransform warmTeaTransform = warmTeaButton.GetComponent<RectTransform>();
-        warmTeaTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
-        warmTeaButton.transform.SetAsLastSibling();
+        RectTransform LozengeTransform = LozengeButton.GetComponent<RectTransform>();
+        LozengeTransform.anchoredPosition = new Vector2(startX, startY + (2 * spacingY));
+        LozengeButton.transform.SetAsLastSibling();
 
-        warmTeaButton.onClick.AddListener(warmTea);
+        LozengeButton.onClick.AddListener(Lozenge);
     }
 
-    void warmTea(){
+    void Lozenge(){
         destroyButtons();
-        StartCoroutine(warmTeaCoroutine());
+        StartCoroutine(LozengeCoroutine());
     }
 
-    IEnumerator warmTeaCoroutine(){
-        dialogueText.text = PokemonName + " uses warmTea!";
+    IEnumerator LozengeCoroutine(){
+        dialogueText.text = PokemonName + " uses Lozenge!";
         yield return null;
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-        dialogueText.text = "(note: it is important to keep your fluid intake up while sick!)";
-        yield return null;
-        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-        dialogueText.text = "(note: warm tea can also soothe swollen tonsils.)";
+        dialogueText.text = "(note: Lozenges can soothe swollen tonsils.)";
         yield return null;
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         if (swollenTonsils == true){
-            dialogueText.text = "Warm tea was effective!";
+            dialogueText.text = "Lozenge was effective!";
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
             dialogueText.text = PokemonName+" heals 15 HP!";
@@ -245,11 +242,11 @@ public class battleSystem : MonoBehaviour
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
             checkOpponentHP();
         }else{
-            dialogueText.text = "Warm tea was ineffective!";
+            dialogueText.text = "Lozenge was ineffective!";
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-            dialogueText.text = PokemonName+" heals 10 HP!";
-            playerHealth = playerHealth + 10;
+            dialogueText.text = PokemonName+" heals 0 HP!";
+            playerHealth = playerHealth + 0;
             playerHealthSlider.value = playerHealth;
             playerHPNumbers.text = playerHealth+"/100";
             yield return null;
@@ -278,6 +275,12 @@ public class battleSystem : MonoBehaviour
             dialogueText.text = "Amoxicillin was effective!";
             dialogueText.text = PokemonName + " no longer has sore throat!";
             soreThroat = false;
+            yield return null;
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+            dialogueText.text = opponentPokemonName + " takes 15 damage!";
+            opponentHealth = opponentHealth - 15;
+            opponentHealthSlider.value = opponentHealth;
+            opponentHPNumbers.text = opponentHealth+"/100";
             yield return null;
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
         }else{
